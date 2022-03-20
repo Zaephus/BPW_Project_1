@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour,IDamageable {
 
     public int maxHealth = 100;
     public int Health {
@@ -21,13 +21,13 @@ public class PlayerController : MonoBehaviour {
 
     public CharacterController controller;
     public Camera playerCamera;
-    public LayerMask groundMask;
+    public LayerMask TerrainMask;
 
     public List<Ability> abilities = new List<Ability>();
 
     public void Start() {
 
-        groundMask = LayerMask.GetMask("Ground");
+        //groundMask = LayerMask.GetMask("Ground");
 
         Health = maxHealth;
 
@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         float radius = 0.09f;
-        onGround = Physics.CheckSphere(this.transform.position,radius,groundMask);
+        onGround = Physics.CheckSphere(this.transform.position,radius,TerrainMask);
 
         if(onGround && velocity.y < 0) {
             velocity.y = 0;
@@ -60,6 +60,16 @@ public class PlayerController : MonoBehaviour {
         rotationX = Mathf.Clamp(rotationX, -rotationLimitX, rotationLimitX);
         playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
         transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * rotationSpeed, 0);
+
+    }
+
+    public void TakeDamage(int dmg) {
+
+        Health -= dmg;
+
+        if(Health <= 0) {
+            Debug.Log("you died");
+        }
 
     }
 
