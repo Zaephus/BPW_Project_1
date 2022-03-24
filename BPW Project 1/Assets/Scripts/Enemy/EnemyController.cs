@@ -6,15 +6,16 @@ public class EnemyController : MonoBehaviour,IDamageable {
 
     private FSM fsm;
 
+    public float viewDist = 1;
+
     public int health = 3;
     public int Health {
         get;
         set;
     }
 
+    [HideInInspector]
     public PlayerController player;
-
-    public Transform target;
 
     public void Start() {
 
@@ -22,7 +23,7 @@ public class EnemyController : MonoBehaviour,IDamageable {
 
         Health = health;
 
-        target = player.transform;
+        player = FindObjectOfType<PlayerController>();
 
     }
 
@@ -39,6 +40,15 @@ public class EnemyController : MonoBehaviour,IDamageable {
         if(Health <= 0) {
             Destroy(gameObject);
         }
+
+    }
+
+    public void FaceTarget(Vector3 destination) {
+
+        Vector3 lookPos = destination - transform.position;
+        lookPos.y = 0;
+        Quaternion rotation = Quaternion.LookRotation(lookPos);
+        transform.rotation = Quaternion.Slerp(transform.rotation,rotation,1);
 
     }
     

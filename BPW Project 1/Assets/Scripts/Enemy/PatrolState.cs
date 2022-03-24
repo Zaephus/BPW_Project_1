@@ -1,22 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PatrolState : BaseState {
 
-    public UnityEngine.AI.NavMeshAgent navMeshAgent;
+    private EnemyController enemy;
+    private NavMeshAgent navMeshAgent;
 
-    public EnemyController enemy;
-
-    public float viewDist = 15;
-
-    public Transform[] wayPoints;
+    public List<Transform> wayPoints = new List<Transform>();
     private int currentWayPointIndex = -1;
     private Transform targetWayPoint;
 
     public override void OnEnter() {
 
-        currentWayPointIndex = (currentWayPointIndex+1) % wayPoints.Length;
+        enemy = GetComponent<EnemyController>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
+
+        navMeshAgent.isStopped = false;
+
+        currentWayPointIndex = (currentWayPointIndex+1) % wayPoints.Count;
         targetWayPoint = wayPoints[currentWayPointIndex];
 
     }
@@ -27,14 +30,16 @@ public class PatrolState : BaseState {
             owner.SwitchState(typeof(IdleState));
         }
 
-        if(Vector3.Distance(transform.position,enemy.target.position) < viewDist) {
-            owner.SwitchState(typeof(AttackState));
+        if(Vector3.Distance(enemy.transform.position,enemy.player.transform.position) < enemy.viewDist) {
+            owner.SwitchState(typeof(Attack_State));
         }
 
         navMeshAgent.SetDestination(targetWayPoint.position);
 
     }
 
-    public override void OnExit() {}
+    public override void OnExit() {
+        navMeshAgent.isStopped = true;
+    }
 
 }

@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FSM {
 
     private Dictionary<System.Type,BaseState> stateDict = new Dictionary<System.Type,BaseState>();
-    private BaseState currentState;
+    public BaseState currentState;
 
     public FSM(System.Type startState,params BaseState[] states) {
 
@@ -25,6 +26,7 @@ public class FSM {
     public void SwitchState(System.Type newStateType) {
         currentState?.OnExit();
         currentState = stateDict[newStateType];
+        Debug.Log(currentState);
         currentState?.OnEnter();
     }
 

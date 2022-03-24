@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class IdleState : BaseState {
 
-    public EnemyController enemy;
-
-    public float viewDist = 15;
+    private EnemyController enemy;
     
     public float waitDuration = 1;
-    private float timer = 0;
+    public float timer = 0;
 
     public override void OnEnter() {
+
+        enemy = GetComponent<EnemyController>();
 
         timer = waitDuration;
 
@@ -22,10 +22,12 @@ public class IdleState : BaseState {
         timer -= Time.deltaTime;
         if(timer <= 0) {
             owner.SwitchState(typeof(PatrolState));
+            timer = 0;
+            
         }
 
-        if(Vector3.Distance(transform.position,enemy.target.position) < viewDist) {
-            owner.SwitchState(typeof(AttackState));
+        if(Vector3.Distance(transform.position,enemy.player.transform.position) < enemy.viewDist) {
+            owner.SwitchState(typeof(Attack_State));
         }
 
     }
