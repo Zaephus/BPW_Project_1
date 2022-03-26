@@ -8,9 +8,24 @@ public class Attack_State : BaseState {
     private EnemyController enemy;
     private NavMeshAgent navMeshAgent;
 
+    public float maxSurgeCooldown = 2f;
+    private float surgeCooldown;
+
+    public float maxSurgeTime = 2f;
+    private float surgeTime;
+
+    public float surgeModifier = 0.1f;
+
+    private bool isSurging;
+
     public override void OnEnter() {
+
         enemy = GetComponent<EnemyController>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+
+        surgeCooldown = maxSurgeCooldown;
+        surgeTime = maxSurgeTime;
+
     }
 
     public override void OnUpdate() {
@@ -19,15 +34,37 @@ public class Attack_State : BaseState {
             owner.SwitchState(typeof(IdleState));
         }
 
-        enemy.FaceTarget(enemy.player.transform.position);
+        if(surgeCooldown >= 0) {
+            enemy.FaceTarget(enemy.player.transform.position);
+            surgeCooldown -= Time.deltaTime;
+        }
+
+        if(surgeCooldown <= 0) {
+
+            surgeCooldown = 0;
+            surgeTime -= Time.deltaTime;
+
+            if(surgeTime >= 0) {
+                Surge();
+            }
+
+            if(surgeTime <= 0) {
+                owner.SwitchState(typeof(IdleState));
+            }
+
+        }
 
     }
 
     public override void OnExit() {}
 
-    public IEnumerator Surge() {
+    public void Surge() {
 
-        yield return null;
+        Vector3 surgeTarget = enemy.player.transform.position - transform.position;
+        surgeTarget.Normalize();
+
+        navMeshAgent.Move(surgeTarget*surgeModifier);
+
     }
 
 }
