@@ -14,20 +14,19 @@ public class PlayerController : MonoBehaviour,IDamageable {
     public float rotationSpeed = 2;
     public float rotationLimitX = 45;
 
-    public Vector3 velocity;
+    [HideInInspector] public Vector3 velocity;
     public float speed = 3;
-    public bool onGround;
+    [HideInInspector] public bool onGround;
     private float rotationX;
 
-    public CharacterController controller;
+    private CharacterController controller;
     public Camera playerCamera;
-    public LayerMask TerrainMask;
 
     public List<Ability> abilities = new List<Ability>();
 
     public void Start() {
 
-        //groundMask = LayerMask.GetMask("Ground");
+        controller = GetComponent<CharacterController>();
 
         Health = maxHealth;
 
@@ -43,10 +42,7 @@ public class PlayerController : MonoBehaviour,IDamageable {
             ability.OnUpdate();
         }
 
-        float radius = 0.09f;
-        onGround = Physics.CheckSphere(this.transform.position,radius,TerrainMask);
-
-        if(onGround && velocity.y < 0) {
+        if(IsOnGround() && velocity.y < 0) {
             velocity.y = 0;
         }
 
@@ -63,11 +59,21 @@ public class PlayerController : MonoBehaviour,IDamageable {
 
     }
 
+    public bool IsOnGround() {
+
+        float radius = 0.09f;
+        LayerMask terrainMask = LayerMask.GetMask("Terrain");
+
+        return Physics.CheckSphere(this.transform.position,radius,terrainMask);
+
+    }
+
     public void TakeDamage(int dmg) {
 
         Health -= dmg;
 
         if(Health <= 0) {
+            Health = 0;
             Debug.Log("you died");
         }
 

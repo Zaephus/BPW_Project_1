@@ -10,6 +10,8 @@ public class AttackState : BaseState {
 
     private Vector3 surgeTarget;
 
+    public int surgeDamage = 15;
+
     public float maxSurgeCooldown = 2f;
     private float surgeCooldown;
 
@@ -43,6 +45,9 @@ public class AttackState : BaseState {
             enemy.FaceTarget(surgeTarget);
             surgeCooldown -= Time.deltaTime;
 
+            surgeTarget.Normalize();
+            surgeTarget *= surgeModifier;
+
         }
 
         if(surgeCooldown <= 0) {
@@ -67,13 +72,14 @@ public class AttackState : BaseState {
     public void OnTriggerEnter(Collider c) {
         if(c.GetComponent<IDamageable>() != null) {
             Debug.Log("Hit");
+            c.GetComponent<IDamageable>().TakeDamage(surgeDamage);
         }
     }
 
     public void Surge(Vector3 target) {
 
-        target.Normalize();
-        target *= surgeModifier;
+        //target.Normalize();
+        //target *= surgeModifier;
 
         navMeshAgent.Move(target);
 

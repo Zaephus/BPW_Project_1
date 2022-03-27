@@ -14,7 +14,7 @@ public class Jump : Ability {
 
     public override void OnUpdate() {
 
-        if(Input.GetButtonDown("Jump") && player.onGround) {
+        if(Input.GetButtonDown("Jump") && player.IsOnGround()) {
             player.velocity.y += Mathf.Sqrt(jumpHeight*-3*player.gravity);
         }
         
