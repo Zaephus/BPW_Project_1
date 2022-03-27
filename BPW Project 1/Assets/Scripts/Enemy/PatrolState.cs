@@ -31,7 +31,7 @@ public class PatrolState : BaseState {
         }
 
         if(Vector3.Distance(enemy.transform.position,enemy.player.transform.position) < enemy.viewDist) {
-            owner.SwitchState(typeof(Attack_State));
+            owner.SwitchState(typeof(AttackState));
         }
 
         navMeshAgent.SetDestination(targetWayPoint.position);

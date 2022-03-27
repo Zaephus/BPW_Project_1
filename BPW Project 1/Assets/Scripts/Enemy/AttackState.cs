@@ -1,73 +1,82 @@
-// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
 
-// public class AttackState : BaseState {
+public class AttackState : BaseState {
 
-//     public UnityEngine.AI.NavMeshAgent navMeshAgent;
+    private EnemyController enemy;
+    private NavMeshAgent navMeshAgent;
 
-//     public float viewDist = 15;
+    private Vector3 surgeTarget;
 
-//     public float attackRange = 5;
-//     public float surgeSpeed = 10;
+    public float maxSurgeCooldown = 2f;
+    private float surgeCooldown;
 
-//     public float surgeCooldown = 2;
-//     private float surgeCooldownTimer;
-//     public float surgeLength = 2;
-//     private float surgeLengthTimer;
+    public float maxSurgeTime = 2f;
+    private float surgeTime;
 
-//     public int damage = 5;
+    public float surgeModifier = 0.1f;
 
-//     public EnemyController enemy;
+    private bool isSurging;
 
-//     private bool entered = false;
+    public override void OnEnter() {
 
-//     public override void OnEnter() {
+        enemy = GetComponent<EnemyController>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
 
-//     }
+        surgeCooldown = maxSurgeCooldown;
+        surgeTime = maxSurgeTime;
 
-//     public override void OnUpdate() {
+    }
 
-//         if(Vector3.Distance(transform.position,enemy.target.position) > viewDist) {
-//             owner.SwitchState(typeof(IdleState));
-//         }
+    public override void OnUpdate() {
 
-//         if(Vector3.Distance(transform.position,enemy.target.position) <= attackRange) {
-                
-//             navMeshAgent.isStopped = true;            
-//             surgeCooldownTimer -= Time.deltaTime;
+        if(Vector3.Distance(transform.position,enemy.player.transform.position) >= enemy.viewDist) {
+            owner.SwitchState(typeof(IdleState));
+        }
 
-//             if(surgeCooldownTimer <= 0) {
-//                 Surge();
-//                 surgeLengthTimer -= Time.deltaTime;
-//             }
+        if(surgeCooldown > 0) {
 
-//         }
-//         else {
-//             navMeshAgent.isStopped = false;
-//             navMeshAgent.SetDestination(enemy.target.position);
-//         }
+            surgeTarget = enemy.player.transform.position - transform.position;
 
-//         if(surgeLengthTimer <= 0) {
-//             surgeCooldownTimer = surgeCooldown;
-//             surgeLengthTimer = surgeLength;
-//         }
+            enemy.FaceTarget(surgeTarget);
+            surgeCooldown -= Time.deltaTime;
 
-//         if(Vector3.Distance(transform.position,enemy.target.position) <= 1 && entered == false) {
-//             entered = true;
-//             enemy.player.TakeDamage(damage);
-//         }
+        }
 
-//         if(Vector3.Distance(transform.position,enemy.target.position) > 1) {
-//             entered = false;
-//         }
+        if(surgeCooldown <= 0) {
 
-//     }
+            surgeCooldown = 0;
+            surgeTime -= Time.deltaTime;
 
-//     public override void OnExit() {}
+            if(surgeTime >= 0) {
+                Surge(surgeTarget);
+            }
 
-//     public void Surge() {
-//         enemy.transform.position += enemy.transform.forward * surgeSpeed * Time.deltaTime;
-//     }
+            if(surgeTime <= 0) {
+                owner.SwitchState(typeof(AttackState));
+            }
 
-// }
+        }
+
+    }
+
+    public override void OnExit() {}
+
+    public void OnTriggerEnter(Collider c) {
+        if(c.GetComponent<IDamageable>() != null) {
+            Debug.Log("Hit");
+        }
+    }
+
+    public void Surge(Vector3 target) {
+
+        target.Normalize();
+        target *= surgeModifier;
+
+        navMeshAgent.Move(target);
+
+    }
+
+}

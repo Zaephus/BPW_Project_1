@@ -27,7 +27,7 @@ public class IdleState : BaseState {
         }
 
         if(Vector3.Distance(transform.position,enemy.player.transform.position) < enemy.viewDist) {
-            owner.SwitchState(typeof(Attack_State));
+            owner.SwitchState(typeof(AttackState));
         }
 
     }

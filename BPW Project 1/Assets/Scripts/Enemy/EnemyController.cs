@@ -8,6 +8,8 @@ public class EnemyController : MonoBehaviour,IDamageable {
 
     public float viewDist = 1;
 
+    public float rotationSpeed = 1f;
+
     public int health = 3;
     public int Health {
         get;
@@ -45,10 +47,11 @@ public class EnemyController : MonoBehaviour,IDamageable {
 
     public void FaceTarget(Vector3 destination) {
 
-        Vector3 lookPos = destination - transform.position;
-        lookPos.y = 0;
-        Quaternion rotation = Quaternion.LookRotation(lookPos);
-        transform.rotation = Quaternion.Slerp(transform.rotation,rotation,1);
+        float singleStep = rotationSpeed * Time.deltaTime;
+
+        Vector3 newDirection = Vector3.RotateTowards(transform.forward,destination,singleStep,0.0f);
+
+        transform.rotation = Quaternion.LookRotation(newDirection);
 
     }
     
