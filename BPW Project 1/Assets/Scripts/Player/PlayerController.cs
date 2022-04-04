@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour,IDamageable {
+public class PlayerController : MonoBehaviour,IAttackable {
 
     public int maxHealth = 100;
+    public int startHealth = 80;
     public int Health {
         get;
         set;
@@ -16,11 +17,16 @@ public class PlayerController : MonoBehaviour,IDamageable {
 
     [HideInInspector] public Vector3 velocity;
     public float speed = 3;
+    [HideInInspector] public float playerSpeed;
     [HideInInspector] public bool onGround;
     private float rotationX;
 
+    public Collider playerInteractCollider;
+
     private CharacterController controller;
     public Camera playerCamera;
+
+    public Transform gunPos;
 
     public List<Ability> abilities = new List<Ability>();
 
@@ -28,7 +34,9 @@ public class PlayerController : MonoBehaviour,IDamageable {
 
         controller = GetComponent<CharacterController>();
 
-        Health = maxHealth;
+        Health = startHealth;
+
+        playerSpeed = speed;
 
         foreach(Ability ability in abilities) {
             ability.Initialize(this);
@@ -47,7 +55,7 @@ public class PlayerController : MonoBehaviour,IDamageable {
         }
 
         Vector3 move = transform.right*Input.GetAxis("Horizontal") + transform.forward*Input.GetAxis("Vertical");
-        controller.Move(move*Time.deltaTime*speed);
+        controller.Move(move*Time.deltaTime*playerSpeed);
 
         velocity.y += gravity*Time.deltaTime;
         controller.Move(velocity*Time.deltaTime);
@@ -74,7 +82,17 @@ public class PlayerController : MonoBehaviour,IDamageable {
 
         if(Health <= 0) {
             Health = 0;
-            Debug.Log("you died");
+            LevelLoader.instance.LoadGameOver();
+        }
+
+    }
+
+    public void Heal(int healAmount) {
+
+        Health += healAmount;
+
+        if(Health >= maxHealth) {
+            Health = maxHealth;
         }
 
     }

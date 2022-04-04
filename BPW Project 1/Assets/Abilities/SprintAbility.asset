@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff7c32f9cdf5a464c9bad5f9ad682eb2, type: 3}
   m_Name: SprintAbility
   m_EditorClassIdentifier: 
-  addedSpeed: 3
+  addedSpeed: 4.5

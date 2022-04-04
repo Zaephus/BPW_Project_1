@@ -12,7 +12,8 @@ public class AttackState : BaseState {
 
     public int surgeDamage = 15;
 
-    public float maxSurgeCooldown = 2f;
+    public float minSurgeCooldown = 1.5f;
+    public float maxSurgeCooldown = 3f;
     private float surgeCooldown;
 
     public float maxSurgeTime = 2f;
@@ -27,7 +28,7 @@ public class AttackState : BaseState {
         enemy = GetComponent<EnemyController>();
         navMeshAgent = GetComponent<NavMeshAgent>();
 
-        surgeCooldown = maxSurgeCooldown;
+        surgeCooldown = Random.Range(minSurgeCooldown,maxSurgeCooldown);
         surgeTime = maxSurgeTime;
 
     }
@@ -70,19 +71,13 @@ public class AttackState : BaseState {
     public override void OnExit() {}
 
     public void OnTriggerEnter(Collider c) {
-        if(c.GetComponent<IDamageable>() != null) {
-            Debug.Log("Hit");
-            c.GetComponent<IDamageable>().TakeDamage(surgeDamage);
+        if(c.GetComponent<IAttackable>() != null) {
+            c.GetComponent<IAttackable>().TakeDamage(surgeDamage);
         }
     }
 
     public void Surge(Vector3 target) {
-
-        //target.Normalize();
-        //target *= surgeModifier;
-
         navMeshAgent.Move(target);
-
     }
 
 }

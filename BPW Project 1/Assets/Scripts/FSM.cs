@@ -26,7 +26,6 @@ public class FSM {
     public void SwitchState(System.Type newStateType) {
         currentState?.OnExit();
         currentState = stateDict[newStateType];
-        Debug.Log(currentState);
         currentState?.OnEnter();
     }
 

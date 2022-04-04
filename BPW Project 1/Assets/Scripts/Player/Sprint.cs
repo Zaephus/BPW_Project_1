@@ -7,20 +7,22 @@ public class Sprint : Ability {
 
     private PlayerController player;
     public float addedSpeed = 3;
+    private float sprintSpeed;
 
     public override void Initialize(PlayerController player) {
         this.player = player;
+        sprintSpeed = player.speed + addedSpeed;
     }
 
     public override void OnUpdate() {
 
-        if(Input.GetKey("w")) {
+        if(Input.GetAxis("Vertical") > 0) {
 
             if(Input.GetButtonDown("Sprint")) {
-                player.speed += addedSpeed;
+                player.playerSpeed = sprintSpeed;
             }
             if(Input.GetButtonUp("Sprint")) {
-                player.speed -= addedSpeed;
+                player.playerSpeed = player.speed;
             }
 
         }

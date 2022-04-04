@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8934a0fb08d8e644a3a681b0cd8b4b5, type: 3}
+  m_Name: BuckShotAbility
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 7318693495780042355, guid: 844cda3a8d3c0a949b93c08262396d9a, type: 3}
